@@ -1,14 +1,15 @@
 name: NuGet Tests
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - '**'
-    tags-ignore:
-      - '**'
-  # Triggers the workflow on labeled PRs only.
+      - "master"
+  # Triggers the workflow on PRs to master branch only.
   pull_request_target:
-    types: [ labeled ]
+    types: [opened, synchronize]
+    branches:
+      - "master"
 
 # Ensures that only the latest commit is running for each PR at a time.
 concurrency:
@@ -22,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu, windows, macos ]
+        os: [ubuntu, windows, macos]
     runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Checkout code
@@ -49,12 +50,12 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: "8.x"
 
       - name: Install NuGet
         uses: nuget/setup-nuget@v2
         with:
-          nuget-version: '6.x'
+          nuget-version: "6.x"
 
       - name: Setup Go with cache
         uses: jfrog/.github/actions/install-go-with-cache@main
